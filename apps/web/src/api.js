@@ -2,7 +2,8 @@ export const API_BASE = import.meta.env?.VITE_API_BASE || 'https://medical-triag
 
 async function request(path, options = {}) {
   try {
-    console.log(`Making request to: ${API_BASE}${path}`)
+    console.log(`🚀 Making request to: ${API_BASE}${path}`)
+    console.log(`🔗 API_BASE is: ${API_BASE}`)
     const res = await fetch(`${API_BASE}${path}`, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       ...options,
