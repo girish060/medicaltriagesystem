@@ -1,0 +1,9 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.api"
+
+[deploy]
+startCommand = "cd apps/api && node dist/main.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "always"
