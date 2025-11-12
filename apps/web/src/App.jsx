@@ -13,7 +13,7 @@ import Dashboard from './pages/Dashboard'
 import { onSocketStatus } from './realtime'
 
 function Layout() {
-  const [connected, setConnected] = useState<boolean>(false)
+  const [connected, setConnected] = useState(false)
   useEffect(() => onSocketStatus(setConnected), [])
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-100 animate-fadeIn">
@@ -99,8 +99,8 @@ function Home() {
 }
 
 export default function App() {
-  const [user, setUser] = useState<any>(null)
-  const [token, setToken] = useState<string | null>(null)
+  const [user, setUser] = useState(null)
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
     // Check for existing token on app load
@@ -119,7 +119,7 @@ export default function App() {
     }
   }, [])
 
-  const handleLogin = (userData: any, userToken: string) => {
+  const handleLogin = (userData, userToken) => {
     setUser(userData)
     setToken(userToken)
   }

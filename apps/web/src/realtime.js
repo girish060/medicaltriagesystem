@@ -1,21 +1,21 @@
-import { io, Socket } from 'socket.io-client'
+import { io } from 'socket.io-client'
 import { API_BASE } from './api'
 
-let socket: Socket | null = null
+let socket = null
 
 export function getSocket() {
   if (!socket) {
     socket = io(API_BASE, { transports: ['websocket'], autoConnect: true })
   }
-  return socket!
+  return socket
 }
 
-export function joinDoctorRoom(doctorId: string) {
+export function joinDoctorRoom(doctorId) {
   const s = getSocket()
   s.emit('join:doctor', { doctorId })
 }
 
-export function onSocketStatus(cb: (connected: boolean) => void) {
+export function onSocketStatus(cb) {
   const s = getSocket()
   const onConnect = () => cb(true)
   const onDisconnect = () => cb(false)
@@ -27,7 +27,7 @@ export function onSocketStatus(cb: (connected: boolean) => void) {
   }
 }
 
-export function onEmergencyUpdate(cb: () => void) {
+export function onEmergencyUpdate(cb) {
   const s = getSocket()
   s.emit('join:emergency')
   s.on('emergency:update', cb)

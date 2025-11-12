@@ -6,7 +6,7 @@ import App from './App'
 import './styles.css'
 
 const qc = new QueryClient()
-const root = createRoot(document.getElementById('root')!);
+const root = createRoot(document.getElementById('root'));
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
