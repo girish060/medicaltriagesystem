@@ -1,5 +1,5 @@
 [build]
-  command = "cd apps/web && npm ci && npm run build"
+  command = "cd apps/web && npm install && npx vite build"
   publish = "apps/web/dist"
 
 [[redirects]]
