@@ -1,0 +1,10 @@
+{
+  "name": "@mts/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint/.eslintrc.json",
+    "./prettier": "./prettier/.prettierrc.json"
+  }
+}

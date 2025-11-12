@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Supabase PostgreSQL via IPv4-compatible Session Pooler
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  NURSE
+  ADMIN
+}
+
+model User {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  email       String    @unique
+  password    String    // hashed password
+  name        String
+  role        UserRole
+  phone       String?
+  isActive    Boolean   @default(true)
+  
+  // Relations based on role
+  patientId   String?   @unique
+  patient     Patient?  @relation(fields: [patientId], references: [id])
+  doctorId    String?   @unique
+  doctor      Doctor?   @relation(fields: [doctorId], references: [id])
+}
+
+model Patient {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  email       String?   @unique
+  phone       String?   @unique
+  preferences String?   // JSON string
+  appointments Appointment[]
+  notifications Notification[]
+  deviceTokens DeviceToken[]
+  user        User?     // Optional user account for patient portal
+}
+
+model Doctor {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  department  String
+  availability String? // JSON string
+  appointments Appointment[]
+  user        User?     // Optional user account for doctor portal
+}
+
+model Appointment {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  patientId    String
+  doctorId     String
+  department   String
+  scheduledAt  DateTime
+  status       String    @default("BOOKED") // BOOKED|ON_WAY|ARRIVED|BEING_TREATED|COMPLETED|CANCELED|ABSENT
+  emergency    Boolean   @default(false)
+  qrCode       String?
+  locationInfo String?   // JSON string
+  swap_history String?   // JSON string
+
+  patient Patient @relation(fields: [patientId], references: [id])
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+  queuePosition QueuePosition?
+
+  @@index([doctorId, scheduledAt])
+}
+
+model QueuePosition {
+  appointmentId String   @id
+  position      Int
+  priority      Int      @default(10) // 0 for emergency
+  state         String    @default("BOOKED") // BOOKED|ON_WAY|ARRIVED|BEING_TREATED|COMPLETED|ABSENT
+  lastSeenAt    DateTime?
+  absentAt      DateTime?
+  swappedWith   String?
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+
+  @@index([priority, position])
+}
+
+model DeviceToken {
+  id         String   @id @default(cuid())
+  patientId  String
+  token      String   @unique
+  createdAt  DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id])
+  @@index([patientId])
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  channel    String   // PUSH|SMS|EMAIL
+  templateKey String
+  payload    String  // JSON string
+  status     String  @default("PENDING") // PENDING|SENT|FAILED
+  sentAt     DateTime?
+  patientId  String?
+
+  patient Patient? @relation(fields: [patientId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  actor      String   // user id or system
+  action     String
+  entityType String
+  entityId   String
+  metadata   String? // JSON string
+
+  @@index([entityType, entityId, createdAt])
+}

@@ -1,0 +1,56 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: mts
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      # Keep SQLite by default; switch to Postgres later during migration
+      NODE_ENV: development
+    volumes:
+      - ..:/workspace
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - '5173:5173'
+    environment:
+      VITE_API_BASE: http://localhost:3000
+    depends_on:
+      - api
+    volumes:
+      - ..:/workspace
+volumes:
+  pgdata: {}

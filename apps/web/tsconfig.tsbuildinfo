@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/realtime.ts","./src/pages/admin.tsx","./src/pages/booking.tsx","./src/pages/dashboard.tsx","./src/pages/doctor.tsx","./src/pages/emergency.tsx","./src/pages/login.tsx","./src/pages/notifications.tsx","./src/pages/patient.tsx","./src/pages/qrscanner.tsx","./src/pages/reception.tsx"],"version":"5.9.3"}
