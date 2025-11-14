@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken'
 
 @Injectable()
 export class AuthService {
-  private readonly JWT_SECRET = process.env.JWT_SECRET || 'medical-triage-default-jwt-secret-key-change-in-production-32chars'
+  private readonly JWT_SECRET = process.env.JWT_SECRET || ''
 
   constructor(private prisma: PrismaService) {}
 
