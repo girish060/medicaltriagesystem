@@ -31,20 +31,45 @@ export class AppointmentController {
     
     // If patientId doesn't look like a CUID (starts with 'c'), treat it as a new patient name
     if (!patientId.startsWith('c')) {
-      // Create a new patient with the provided name
-      const newPatient = await this.prisma.patient.create({
-        data: {
-          name: patientId, // Use the custom name
-          phone: body.phoneNumber,
-        },
-      })
+      // Try to find existing patient by phone if provided
+      let newPatient
+      if (body.phoneNumber) {
+        const existingPatient = await this.prisma.patient.findUnique({
+          where: { phone: body.phoneNumber },
+        })
+        if (existingPatient) {
+          newPatient = existingPatient
+        } else {
+          // Create a new patient with the provided name
+          newPatient = await this.prisma.patient.create({
+            data: {
+              name: patientId, // Use the custom name
+              phone: body.phoneNumber,
+            },
+          })
+        }
+      } else {
+        // Create a new patient without phone
+        newPatient = await this.prisma.patient.create({
+          data: {
+            name: patientId, // Use the custom name
+          },
+        })
+      }
       patientId = newPatient.id
     } else if (body.phoneNumber) {
-      // Update existing patient's phone number if provided
-      await this.prisma.patient.update({
-        where: { id: patientId },
-        data: { phone: body.phoneNumber },
-      })
+      // Update existing patient's phone number if provided, but handle duplicates
+      try {
+        await this.prisma.patient.update({
+          where: { id: patientId },
+          data: { phone: body.phoneNumber },
+        })
+      } catch (error: any) {
+        // If phone already exists, just skip the update
+        if (error.code !== 'P2002') {
+          throw error
+        }
+      }
     }
 
     // Create appointment first
