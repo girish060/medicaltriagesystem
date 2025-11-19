@@ -239,11 +239,6 @@ For detailed deployment instructions, refer to the [deployment guide](DEPLOYMENT
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
 
 ## 🙏 Acknowledgments
 
