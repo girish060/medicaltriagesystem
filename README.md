@@ -175,9 +175,7 @@ interface QueueEvent {
 
 For inquiries and support, please contact the development team through the project's GitHub repository.
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Deployment
 
